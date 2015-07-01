@@ -359,7 +359,7 @@ def display(**kwargs):
     """
 
     settings = Structure(
-        **{'standalone': True,
+        **{'standalone': pylab.isinteractive(),
            'filename': None})
     settings.update(kwargs)
 
