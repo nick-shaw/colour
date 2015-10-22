@@ -148,12 +148,17 @@ def Lab_to_XYZ(Lab,
     f_x = a / 500 + f_y
     f_z = f_y - b / 200
 
-    x_r = np.where(f_x ** 3 > CIE_E, f_x ** 3, (116 * f_x - 16) / CIE_K)
-    y_r = np.where(L > CIE_K * CIE_E, ((L + 16) / 116) ** 3, L / CIE_K)
-    z_r = np.where(f_z ** 3 > CIE_E, f_z ** 3, (116 * f_z - 16) / CIE_K)
+    fL = ((L + 16) / 116)
+    fL3 = fL * fL * fL
+
+    fx3 = f_x * f_x * f_x
+    fz3 = f_z * f_z * f_z
+
+    x_r = np.where(fx3 > CIE_E, fx3, (116 * f_x - 16) / CIE_K)
+    y_r = np.where(L > CIE_K * CIE_E, fL3, L / CIE_K)
+    z_r = np.where(fz3 > CIE_E, fz3, (116 * f_z - 16) / CIE_K)
 
     XYZ = tstack((x_r, y_r, z_r)) * XYZ_r
-
     return XYZ
 
 
