@@ -53,20 +53,21 @@ __all__ = ['lightness_Glasser1958',
 def lightness_Glasser1958(Y):
     """
     Returns the *Lightness* :math:`L` of given *luminance* :math:`Y` using
-    *Glasser, Mckinney, Reilly and Schnelle (1958)* method.
+    *Glasser (1958)* method.
 
     Parameters
     ----------
-    Y : numeric or array_like
+    Y : numeric or array_like, Luminance, Y, 100
         *luminance* :math:`Y`.
 
     Returns
     -------
-    numeric or array_like
+    numeric or array_like, Lightness, L, 100
         *Lightness* :math:`L`.
 
     Notes
     -----
+    method : Glasser 1958, Glasser (1958)
     -   Input *luminance* :math:`Y` is in domain [0, 100].
     -   Output *Lightness* :math:`L` is in range [0, 100].
 
@@ -94,19 +95,19 @@ def lightness_Wyszecki1963(Y):
     Returns the *Lightness* :math:`W` of given *luminance* :math:`Y` using
     *Wyszecki (1963)* method.
 
-
     Parameters
     ----------
-    Y : numeric or array_like
+    Y : numeric or array_like, Luminance, Y, 100
         *luminance* :math:`Y`.
 
     Returns
     -------
-    numeric or array_like
+    numeric or array_like, Lightness, W, 100
         *Lightness* :math:`W`.
 
     Notes
     -----
+    method : Wyszecki 1963, Wyszecki (1963)
     -   Input *luminance* :math:`Y` is in domain [0, 100].
     -   Output *Lightness* :math:`W` is in range [0, 100].
 
@@ -140,18 +141,19 @@ def lightness_CIE1976(Y, Y_n=100):
 
     Parameters
     ----------
-    Y : numeric or array_like
+    Y : numeric or array_like, Luminance, Y, 100
         *luminance* :math:`Y`.
-    Y_n : numeric or array_like, optional
+    Y_n : numeric or array_like, optional, Luminance, Y, 100
         White reference *luminance* :math:`Y_n`.
 
     Returns
     -------
-    numeric or array_like
+    numeric or array_like, Lightness, L^\star, 100
         *Lightness* :math:`L^*`.
 
     Notes
     -----
+    method : CIE 1976, CIE 1976
     -   Input *luminance* :math:`Y` and :math:`Y_n` are in domain [0, 100].
     -   Output *Lightness* :math:`L^*` is in range [0, 100].
 

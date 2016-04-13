@@ -81,6 +81,8 @@ from .temperature import *  # noqa
 from . import temperature  # noqa
 from .volume import *  # noqa
 from . import volume  # noqa
+from .metadata import *  # noqa
+from . import metadata  # noqa
 
 __author__ = 'Colour Developers'
 __copyright__ = 'Copyright (C) 2013-2016 - Colour Developers'
@@ -107,6 +109,8 @@ __all__ += quality.__all__
 __all__ += recovery.__all__
 __all__ += temperature.__all__
 __all__ += volume.__all__
+
+install_metadata()  # noqa
 
 __application_name__ = 'Colour'
 
