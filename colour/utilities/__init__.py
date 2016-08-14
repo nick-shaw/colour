@@ -36,6 +36,7 @@ from .data_structures import (
     Lookup,
     Structure,
     CaseInsensitiveMapping)
+from .iterators import Peekable
 from .verbose import ColourWarning, message_box, warning, filter_warnings
 
 __all__ = ['handle_numpy_errors',
@@ -68,4 +69,5 @@ __all__ += ['ArbitraryPrecisionMapping',
             'Lookup',
             'Structure',
             'CaseInsensitiveMapping']
+__all__ += ['Peekable']
 __all__ += ['ColourWarning', 'message_box', 'warning', 'filter_warnings']
