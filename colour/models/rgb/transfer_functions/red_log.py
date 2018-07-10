@@ -24,6 +24,9 @@ References
 ----------
 -   :cite:`Nattress2016a` : Nattress, G. (2016). Private Discussion with
     Shaw, N.
+-   :cite:`RED2016a` : RED Digital Cinema (2016). Retrieved July 10, 2018, from
+    https://s3.amazonaws.com/red_3/downloads/other/white-papers/\
+    WhitePaperREDWideGamutRGBandLog3G10.pdf
 -   :cite:`SonyImageworks2012a` : Sony Imageworks. (2012). make.py. Retrieved
     November 27, 2014, from https://github.com/imageworks/OpenColorIO-Configs/\
 blob/master/nuke-default/make.py
@@ -176,7 +179,7 @@ def log_decoding_REDLogFilm(y, black_offset=10 ** ((95 - 685) / 300)):
     return log_decoding_Cineon(y, black_offset)
 
 
-def log_encoding_Log3G10(x, legacy_curve=False):
+def log_encoding_Log3G10(x, legacy_curve=0):
     """
     Defines the *Log3G10* log encoding curve / opto-electronic transfer
     function.
@@ -185,8 +188,8 @@ def log_encoding_Log3G10(x, legacy_curve=False):
     ----------
     x : numeric or array_like
         Linear data :math:`x`.
-    legacy_curve : bool, optional
-        Whether to use the v1 *Log3G10* log encoding curve. Default is *False*.
+    legacy_curve : int, optional
+        Whether to use a legacy *Log3G10* log encoding curve. Default is *0*.
 
     Returns
     -------
@@ -195,14 +198,14 @@ def log_encoding_Log3G10(x, legacy_curve=False):
 
     Notes
     -----
-    -   The v1 *Log3G10* log encoding curve is the one used in *REDCINE-X beta
-        42*. *Resolve 12.5.2* also uses the v1 curve. *RED* is planning to use
-        v2 *Log3G10* log encoding curve in the release version of the
-        *RED SDK*.
-        Use the `legacy_curve=True` argument to switch to the v1 curve for
-        compatibility with the current (as of September 21, 2016) *RED SDK*.
-    -   The intent of the v1 *Log3G10* log encoding curve is that zero maps to
-        zero, 0.18 maps to 1/3, and 10 stops above 0.18 maps to 1.0.
+    -   The v1 *Log3G10* log encoding curve was the one used in *REDCINE-X beta
+        42*. *Resolve 12.5.2* also used the v1 curve. A v2 curve also existed
+        during development. *RED* uses a v3 *Log3G10* log encoding curve in the
+        release version of the *RED SDK*.
+        Use the `legacy_curve=1` or `legacy_curve=2` arguments to switch to the
+        old curves for compatibility with the older *RED SDK*s.
+    -   The intent of the *Log3G10* log encoding curve is that 0.18 maps to
+        1/3, and 10 stops above 0.18 maps to 1.0.
         The name indicates this in a similar way to the naming conventions of
         *Sony HyperGamma* curves.
 
@@ -230,10 +233,11 @@ def log_encoding_Log3G10(x, legacy_curve=False):
     References
     ----------
     -   :cite:`Nattress2016a`
+    -   :cite:`RED2016a`
 
     Examples
     --------
-    >>> log_encoding_Log3G10(0.18, legacy_curve=True)  # doctest: +ELLIPSIS
+    >>> log_encoding_Log3G10(0.18, legacy_curve=1)  # doctest: +ELLIPSIS
     0.3333336...
     >>> log_encoding_Log3G10(0.0)  # doctest: +ELLIPSIS
     0.0915514...
@@ -241,14 +245,18 @@ def log_encoding_Log3G10(x, legacy_curve=False):
 
     x = np.asarray(x)
 
-    if legacy_curve:
+    if legacy_curve==1:
         return np.sign(x) * 0.222497 * np.log10((np.abs(x) * 169.379333) + 1)
-    else:
+    elif legacy_curve==2:
         return (np.sign(x + 0.01) * 0.224282 *
                 np.log10((np.abs(x + 0.01) * 155.975327) + 1))
+    else:
+        return np.where(x + 0.01 >= 0,
+                        (0.224282 * np.log10(((x + 0.01) * 155.975327) + 1)),
+                        (x + 0.01) * 15.1927)
 
 
-def log_decoding_Log3G10(y, legacy_curve=False):
+def log_decoding_Log3G10(y, legacy_curve=0):
     """
     Defines the *Log3G10* log decoding curve / electro-optical transfer
     function.
@@ -257,8 +265,8 @@ def log_decoding_Log3G10(y, legacy_curve=False):
     ----------
     y : numeric or array_like
         Non-linear data :math:`y`.
-    legacy_curve : bool, optional
-        Whether to use the v1 *Log3G10* log encoding curve. Default is *False*.
+    legacy_curve : int, optional
+        Whether to use a legacy *Log3G10* log encoding curve. Default is *0*.
 
     Returns
     -------
@@ -268,10 +276,11 @@ def log_decoding_Log3G10(y, legacy_curve=False):
     References
     ----------
     -   :cite:`Nattress2016a`
+    -   :cite:`RED2016a`
 
     Examples
     --------
-    >>> log_decoding_Log3G10(1.0 / 3, legacy_curve=True)  # doctest: +ELLIPSIS
+    >>> log_decoding_Log3G10(1.0 / 3, legacy_curve=1)  # doctest: +ELLIPSIS
     0.1799994...
     >>> log_decoding_Log3G10(1.0)  # doctest: +ELLIPSIS
     184.3223476...
@@ -279,12 +288,16 @@ def log_decoding_Log3G10(y, legacy_curve=False):
 
     y = np.asarray(y)
 
-    if legacy_curve:
+    if legacy_curve==1:
         return (np.sign(y) *
                 (np.power(10.0, np.abs(y) / 0.222497) - 1) / 169.379333)
-    else:
+    elif legacy_curve==2:
         return (np.sign(y) *
                 (np.power(10.0, np.abs(y) / 0.224282) - 1) / 155.975327) - 0.01
+    else:
+        return np.where(y >= 0, ((np.power(10.0, np.abs(y) / 0.224282) - 1) /
+                        155.975327) - 0.01, 
+                        (y / 15.1927) - 0.01)
 
 
 def log_encoding_Log3G12(x):
