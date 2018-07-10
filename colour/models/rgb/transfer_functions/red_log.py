@@ -24,7 +24,7 @@ References
 ----------
 -   :cite:`Nattress2016a` : Nattress, G. (2016). Private Discussion with
     Shaw, N.
--   :cite:`RED2016a` : RED Digital Cinema (2016). Retrieved July 10, 2018, from
+-   :cite:`RED2016a` : RED Digital Cinema. (2016). Retrieved July 10, 2018, from
     https://s3.amazonaws.com/red_3/downloads/other/white-papers/\
     WhitePaperREDWideGamutRGBandLog3G10.pdf
 -   :cite:`SonyImageworks2012a` : Sony Imageworks. (2012). make.py. Retrieved
@@ -179,7 +179,7 @@ def log_decoding_REDLogFilm(y, black_offset=10 ** ((95 - 685) / 300)):
     return log_decoding_Cineon(y, black_offset)
 
 
-def log_encoding_Log3G10(x, legacy_curve=0):
+def log_encoding_Log3G10(x, legacy_curve=False):
     """
     Defines the *Log3G10* log encoding curve / opto-electronic transfer
     function.
@@ -189,7 +189,8 @@ def log_encoding_Log3G10(x, legacy_curve=0):
     x : numeric or array_like
         Linear data :math:`x`.
     legacy_curve : int, optional
-        Whether to use a legacy *Log3G10* log encoding curve. Default is *0*.
+        Which (if any) legacy *Log3G10* log encoding curve to use. Default is
+        *False*.
 
     Returns
     -------
@@ -256,7 +257,7 @@ def log_encoding_Log3G10(x, legacy_curve=0):
                         (x + 0.01) * 15.1927)
 
 
-def log_decoding_Log3G10(y, legacy_curve=0):
+def log_decoding_Log3G10(y, legacy_curve=False):
     """
     Defines the *Log3G10* log decoding curve / electro-optical transfer
     function.
@@ -266,7 +267,8 @@ def log_decoding_Log3G10(y, legacy_curve=0):
     y : numeric or array_like
         Non-linear data :math:`y`.
     legacy_curve : int, optional
-        Whether to use a legacy *Log3G10* log encoding curve. Default is *0*.
+        Which (if any) legacy *Log3G10* log encoding curve to use. Default is
+        *False*.
 
     Returns
     -------

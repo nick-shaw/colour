@@ -263,21 +263,26 @@ log_encoding_Log3G10` definition.
         """
 
         self.assertAlmostEqual(
-            log_encoding_Log3G10(-1.0, legacy_curve=True),
+            log_encoding_Log3G10(-1.0, legacy_curve=1),
             -0.496483569056003,
             places=7)
 
         self.assertAlmostEqual(
-            log_encoding_Log3G10(0.0, legacy_curve=True), 0.0, places=7)
+            log_encoding_Log3G10(-1.0, legacy_curve=2),
+            -0.49151277752251088,
+            places=7)
 
         self.assertAlmostEqual(
-            log_encoding_Log3G10(0.18, legacy_curve=True),
+            log_encoding_Log3G10(0.0, legacy_curve=1), 0.0, places=7)
+
+        self.assertAlmostEqual(
+            log_encoding_Log3G10(0.18, legacy_curve=1),
             0.333333644207707,
             places=7)
 
         self.assertAlmostEqual(
             log_encoding_Log3G10(-1.0, legacy_curve=False),
-            -0.491512777522511,
+            -15.040773,
             places=7)
 
         self.assertAlmostEqual(
@@ -300,7 +305,7 @@ log_encoding_Log3G10` definition n-dimensional arrays support.
         y1 = 0.333333644207707
         y2 = 0.333332912025992
         np.testing.assert_almost_equal(
-            log_encoding_Log3G10(x, legacy_curve=True), y1, decimal=7)
+            log_encoding_Log3G10(x, legacy_curve=1), y1, decimal=7)
         np.testing.assert_almost_equal(
             log_encoding_Log3G10(x, legacy_curve=False), y2, decimal=7)
 
@@ -308,7 +313,7 @@ log_encoding_Log3G10` definition n-dimensional arrays support.
         y1 = np.tile(y1, 6)
         y2 = np.tile(y2, 6)
         np.testing.assert_almost_equal(
-            log_encoding_Log3G10(x, legacy_curve=True), y1, decimal=7)
+            log_encoding_Log3G10(x, legacy_curve=1), y1, decimal=7)
         np.testing.assert_almost_equal(
             log_encoding_Log3G10(x, legacy_curve=False), y2, decimal=7)
 
@@ -316,7 +321,7 @@ log_encoding_Log3G10` definition n-dimensional arrays support.
         y1 = np.reshape(y1, (2, 3))
         y2 = np.reshape(y2, (2, 3))
         np.testing.assert_almost_equal(
-            log_encoding_Log3G10(x, legacy_curve=True), y1, decimal=7)
+            log_encoding_Log3G10(x, legacy_curve=1), y1, decimal=7)
         np.testing.assert_almost_equal(
             log_encoding_Log3G10(x, legacy_curve=False), y2, decimal=7)
 
@@ -324,7 +329,7 @@ log_encoding_Log3G10` definition n-dimensional arrays support.
         y1 = np.reshape(y1, (2, 3, 1))
         y2 = np.reshape(y2, (2, 3, 1))
         np.testing.assert_almost_equal(
-            log_encoding_Log3G10(x, legacy_curve=True), y1, decimal=7)
+            log_encoding_Log3G10(x, legacy_curve=1), y1, decimal=7)
         np.testing.assert_almost_equal(
             log_encoding_Log3G10(x, legacy_curve=False), y2, decimal=7)
 
@@ -356,20 +361,25 @@ log_decoding_Log3G10` definition.
         """
 
         self.assertAlmostEqual(
-            log_decoding_Log3G10(-0.496483569056003, legacy_curve=True),
+            log_decoding_Log3G10(-0.496483569056003, legacy_curve=1),
             -1.0,
             places=7)
 
         self.assertAlmostEqual(
-            log_decoding_Log3G10(0.0, legacy_curve=True), 0.0, places=7)
+            log_decoding_Log3G10(-0.491512777522511, legacy_curve=2),
+            -1.0,
+            places=7)
 
         self.assertAlmostEqual(
-            log_decoding_Log3G10(0.333333644207707, legacy_curve=True),
+            log_decoding_Log3G10(0.0, legacy_curve=1), 0.0, places=7)
+
+        self.assertAlmostEqual(
+            log_decoding_Log3G10(0.333333644207707, legacy_curve=1),
             0.18,
             places=7)
 
         self.assertAlmostEqual(
-            log_decoding_Log3G10(-0.491512777522511, legacy_curve=False),
+            log_decoding_Log3G10(-15.040773, legacy_curve=False),
             -1.0,
             places=7)
 
@@ -393,7 +403,7 @@ log_decoding_Log3G10` definition n-dimensional arrays support.
         y2 = 0.333332912025992
         x = 0.18
         np.testing.assert_almost_equal(
-            log_decoding_Log3G10(y1, legacy_curve=True), x, decimal=7)
+            log_decoding_Log3G10(y1, legacy_curve=1), x, decimal=7)
         np.testing.assert_almost_equal(
             log_decoding_Log3G10(y2, legacy_curve=False), x, decimal=7)
 
@@ -401,7 +411,7 @@ log_decoding_Log3G10` definition n-dimensional arrays support.
         y2 = np.tile(y2, 6)
         x = np.tile(x, 6)
         np.testing.assert_almost_equal(
-            log_decoding_Log3G10(y1, legacy_curve=True), x, decimal=7)
+            log_decoding_Log3G10(y1, legacy_curve=1), x, decimal=7)
         np.testing.assert_almost_equal(
             log_decoding_Log3G10(y2, legacy_curve=False), x, decimal=7)
 
@@ -409,7 +419,7 @@ log_decoding_Log3G10` definition n-dimensional arrays support.
         y2 = np.reshape(y2, (2, 3))
         x = np.reshape(x, (2, 3))
         np.testing.assert_almost_equal(
-            log_decoding_Log3G10(y1, legacy_curve=True), x, decimal=7)
+            log_decoding_Log3G10(y1, legacy_curve=1), x, decimal=7)
         np.testing.assert_almost_equal(
             log_decoding_Log3G10(y2, legacy_curve=False), x, decimal=7)
 
@@ -417,7 +427,7 @@ log_decoding_Log3G10` definition n-dimensional arrays support.
         y2 = np.reshape(y2, (2, 3, 1))
         x = np.reshape(x, (2, 3, 1))
         np.testing.assert_almost_equal(
-            log_decoding_Log3G10(y1, legacy_curve=True), x, decimal=7)
+            log_decoding_Log3G10(y1, legacy_curve=1), x, decimal=7)
         np.testing.assert_almost_equal(
             log_decoding_Log3G10(y2, legacy_curve=False), x, decimal=7)
 
