@@ -15,13 +15,7 @@ References
 
 from __future__ import division, unicode_literals
 
-import numpy as np
-import os
-import re
-
-from colour.constants import DEFAULT_FLOAT_DTYPE
 from colour.io.luts import LUT1D, LUT2D, LUT3D, LUTSequence
-from colour.utilities import tstack
 
 __author__ = 'Colour Developers'
 __copyright__ = 'Copyright (C) 2013-2018 - Colour Developers'
@@ -71,7 +65,7 @@ def write_LUT_Cinespace(LUT, path, decimals=7):
     >>> LUT = LUT3D(
     ...     spow(LUT3D.linear_table(16, domain), 1 / 2.2),
     ...     'My LUT',
-    ...     np.array([[-0.1, -0.2, -0.4], [1.5, 3.0, 6.0]]),
+    ...     domain,
     ...     comments=['A first comment.', 'A second comment.'])
     >>> write_LUT_Cinespace(LUT, 'My_LUT.cube')  # doctest: +SKIP
     """
@@ -148,8 +142,6 @@ def write_LUT_Cinespace(LUT, path, decimals=7):
 
         csp_file.write('END METADATA\n\n')
 
-        default_domain = np.array([[0, 0, 0], [1, 1, 1]])
-
         if has_3D:
             if has_2D:
                 for i in range(3):
@@ -168,7 +160,8 @@ def write_LUT_Cinespace(LUT, path, decimals=7):
                 for i in range(3):
                     csp_file.write('2\n')
                     csp_file.write('{0}\n'.format(
-                                   _format_tuple([LUT[1].domain[0][i],  LUT[1].domain[1][i]])))
+                                   _format_tuple([LUT[1].domain[0][i],
+                                                 LUT[1].domain[1][i]])))
                     csp_file.write('0.0 1.0\n')
             csp_file.write('\n{0} {1} {2}\n'.format(LUT[1].size,
                                                     LUT[1].size,
@@ -182,7 +175,7 @@ def write_LUT_Cinespace(LUT, path, decimals=7):
                 csp_file.write('2\n')
                 csp_file.write('{0}\n'.format(
                                _format_tuple([LUT[1].domain[0][i],
-                               LUT[1].domain[1][i]])))
+                                             LUT[1].domain[1][i]])))
                 csp_file.write('0.0 1.0\n')
             csp_file.write('\n{0} {1} {2}\n'.format(LUT[1].size,
                                                     LUT[1].size,
