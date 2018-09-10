@@ -16,6 +16,8 @@ References
 from __future__ import division, unicode_literals
 
 from colour.io.luts import LUT1D, LUT2D, LUT3D, LUTSequence
+from colour.utilities import tsplit
+import numpy as np
 
 __author__ = 'Colour Developers'
 __copyright__ = 'Copyright (C) 2013-2018 - Colour Developers'
@@ -70,7 +72,7 @@ def write_LUT_Cinespace(LUT, path, decimals=7):
     >>> write_LUT_Cinespace(LUT, 'My_LUT.cube')  # doctest: +SKIP
     """
 
-    has_3D, has_2D = False, False
+    has_3D, has_2D, non_uniform = False, False, False
 
     if isinstance(LUT, LUTSequence):
         assert (len(LUT) == 2 and
@@ -84,11 +86,15 @@ def write_LUT_Cinespace(LUT, path, decimals=7):
             LUT[0] = LUT[0].as_LUT(LUT2D)
 
     elif isinstance(LUT, LUT1D):
+        if LUT.is_domain_explicit():
+            non_uniform = True
         name = LUT.name
         LUT = LUTSequence(LUT.as_LUT(LUT2D), LUT3D())
         has_2D = True
 
     elif isinstance(LUT, LUT2D):
+        if LUT.is_domain_explicit():
+            non_uniform = True
         name = LUT.name
         LUT = LUTSequence(LUT, LUT3D())
         has_2D = True
@@ -106,6 +112,13 @@ def write_LUT_Cinespace(LUT, path, decimals=7):
             'Shaper size must be in domain [2, 65536]!'
     if has_3D:
         assert 2 <= LUT[1].size <= 256, 'Cube size must be in domain [2, 256]!'
+
+    def _ragged_size(table):
+        r, g, b = tsplit(table)
+        r_len = r.shape[-1] - np.sum(np.isnan(r))
+        g_len = g.shape[-1] - np.sum(np.isnan(g))
+        b_len = b.shape[-1] - np.sum(np.isnan(b))
+        return [r_len, g_len, b_len]
 
     def _format_array(array):
         """
@@ -142,19 +155,32 @@ def write_LUT_Cinespace(LUT, path, decimals=7):
 
         csp_file.write('END METADATA\n\n')
 
-        if has_3D:
+        if has_3D or non_uniform:
             if has_2D:
                 for i in range(3):
-                    csp_file.write('{0}\n'.format(LUT[0].size))
-                    for j in range(LUT[0].size):
-                        entry = (LUT[0].domain[0][i] + j *
-                                 (LUT[0].domain[1][i] -
-                                 LUT[0].domain[0][i]) /
-                                 (LUT[0].size - 1))
-                        csp_file.write('{0} '.format(entry))
+                    if LUT[0].is_domain_explicit():
+                        size = _ragged_size(LUT[0].domain)[i]
+                        table_min = np.nanmin(LUT[0].table)
+                        table_max = np.nanmax(LUT[0].table)
+                    else:
+                        size = LUT[0].size
+                    csp_file.write('{0}\n'.format(size))
+                    for j in range(size):
+                        if LUT[0].is_domain_explicit():
+                            entry = LUT[0].domain[j][i]
+                        else:
+                            entry = (LUT[0].domain[0][i] + j *
+                                     (LUT[0].domain[1][i] -
+                                     LUT[0].domain[0][i]) /
+                                     (LUT[0].size - 1))
+                        csp_file.write('{0:.{1}f} '.format(entry, decimals))
                     csp_file.write('\n')
-                    for j in range(LUT[0].size):
-                        csp_file.write('{0} '.format(LUT[0].table[j][i]))
+                    for j in range(size):
+                        entry = LUT[0].table[j][i]
+                        if non_uniform:
+                            entry -= table_min
+                            entry /= (table_max - table_min)
+                        csp_file.write('{0:.{1}f} '.format(entry, decimals))
                     csp_file.write('\n')
             else:
                 for i in range(3):
@@ -163,23 +189,30 @@ def write_LUT_Cinespace(LUT, path, decimals=7):
                                    _format_tuple([LUT[1].domain[0][i],
                                                  LUT[1].domain[1][i]])))
                     csp_file.write('0.0 1.0\n')
-            csp_file.write('\n{0} {1} {2}\n'.format(LUT[1].size,
-                                                    LUT[1].size,
-                                                    LUT[1].size))
-            table = LUT[1].table.reshape((-1, 3), order='F')
-            for row in table:
+            if non_uniform:
+                csp_file.write('\n{0}\n'.format(2))
+                row = [table_min, table_min, table_min]
                 csp_file.write('{0}\n'.format(_format_array(row)))
+                row = [table_max, table_max, table_max]
+                csp_file.write('{0}\n'.format(_format_array(row)))
+            else:
+                csp_file.write('\n{0} {1} {2}\n'.format(LUT[1].size,
+                                                        LUT[1].size,
+                                                        LUT[1].size))
+                table = LUT[1].table.reshape((-1, 3), order='F')
+                for row in table:
+                    csp_file.write('{0}\n'.format(_format_array(row)))
 
         else:
             for i in range(3):
                 csp_file.write('2\n')
                 csp_file.write('{0}\n'.format(
-                               _format_tuple([LUT[1].domain[0][i],
-                                             LUT[1].domain[1][i]])))
+                               _format_tuple([LUT[0].domain[0][i],
+                                             LUT[0].domain[1][i]])))
                 csp_file.write('0.0 1.0\n')
-            csp_file.write('\n{0} {1} {2}\n'.format(LUT[1].size,
-                                                    LUT[1].size,
-                                                    LUT[1].size))
+            csp_file.write('\n{0} {1} {2}\n'.format(LUT[0].size,
+                                                    LUT[0].size,
+                                                    LUT[0].size))
             table = LUT[0].table
             for row in table:
                 csp_file.write('{0}\n'.format(_format_array(row)))
