@@ -22,6 +22,7 @@ from .aces_it import (
     optimisation_factory_rawtoaces_v1,
     optimisation_factory_Jzazbz,
     matrix_idt,
+    matrix_idt_blackbox,
     camera_RGB_to_ACES2065_1,
 )
 from .correction import (
@@ -62,6 +63,7 @@ __all__ += [
     'optimisation_factory_rawtoaces_v1',
     'optimisation_factory_Jzazbz',
     'matrix_idt',
+    'matrix_idt_blackbox',
     'camera_RGB_to_ACES2065_1',
 ]
 __all__ += [

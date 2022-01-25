@@ -17,6 +17,7 @@ Defines the *Academy Color Encoding System* (ACES) *Input Transform* utilities:
 -   :func:`colour.characterisation.optimisation_factory_rawtoaces_v1`
 -   :func:`colour.characterisation.optimisation_factory_Jzazbz`
 -   :func:`colour.matrix_idt`
+-   :func:`matrix_idt_blackbox`
 -   :func:`colour.camera_RGB_to_ACES2065_1`
 
 References
@@ -110,6 +111,7 @@ __all__ = [
     'optimisation_factory_rawtoaces_v1',
     'optimisation_factory_Jzazbz',
     'matrix_idt',
+    'matrix_idt_blackbox',
     'camera_RGB_to_ACES2065_1',
 ]
 
@@ -888,6 +890,78 @@ def matrix_idt(sensitivities,
         return M, RGB_w, XYZ, RGB
     else:
         return M, RGB_w
+
+
+def matrix_idt_blackbox(RGB_source,
+               RGB_target=None,
+               optimisation_factory=optimisation_factory_rawtoaces_v1,
+               optimisation_kwargs=None):
+    """
+    Computes an *Input Deice Transform* (IDT) matrix for given source and target *RGB*
+    alues.
+    Parameters
+    ----------
+    RGB_source : array_like
+        Source *RGB* values.
+    RGB_target : array_like, optional
+        Target *ACES RGB* values, if *None* ColorChecker 24 values from SMPTE
+        2065-1(amended) and ISO 17321-1 are used.
+    optimisation_factory : callable, optional
+        Callable producing the objective function and the *CIE XYZ* to
+        optimisation colour model function.
+    optimisation_kwargs : dict_like, optional
+        Parameters for :func:`scipy.optimize.minimize` definition.
+    Returns
+    -------
+    ndarray
+        IDT matrix :math:`M`.
+    """
+
+    RGB_source = as_float_array(RGB_source)
+    if RGB_target is None:
+        RGB_target = np.array([[0.11877, 0.08709, 0.05895],
+                               [0.40002, 0.31916, 0.23736],
+                               [0.18476, 0.20398, 0.31311],
+                               [0.10901, 0.13511, 0.06493],
+                               [0.26684, 0.24604, 0.40932],
+                               [0.32283, 0.46208, 0.40606],
+                               [0.38605, 0.22743, 0.05777],
+                               [0.13822, 0.13037, 0.33703],
+                               [0.30202, 0.13752, 0.12758],
+                               [0.0931, 0.06347, 0.13525],
+                               [0.34876, 0.43654, 0.10613],
+                               [0.48655, 0.36685, 0.08061],
+                               [0.08732, 0.07443, 0.27274],
+                               [0.15366, 0.25692, 0.09071],
+                               [0.21742, 0.0707, 0.0513],
+                               [0.58919, 0.53943, 0.09157],
+                               [0.30904, 0.14818, 0.27426],
+                               [0.14901, 0.23378, 0.35939],
+                               [0.86653, 0.86792, 0.85818],
+                               [0.57356, 0.57256, 0.57169],
+                               [0.35346, 0.35337, 0.35391],
+                               [0.20253, 0.20243, 0.20287],
+                               [0.09467, 0.0952, 0.09637],
+                               [0.03745, 0.03766, 0.03895]])
+    else:
+        RGB_target = as_float_array(RGB_target)
+
+    XYZ = vector_dot(RGB_COLOURSPACE_ACES2065_1.matrix_RGB_to_XYZ, RGB_target)
+
+    objective_function, XYZ_to_optimization_colour_model = (
+        optimisation_factory())
+    optimisation_settings = {
+        'method': 'BFGS',
+        'jac': '2-point',
+    }
+    if optimisation_kwargs is not None:
+        optimisation_settings.update(optimisation_kwargs)
+
+    M = minimize(objective_function, np.ravel(np.identity(3)),
+                 (RGB_source, XYZ_to_optimization_colour_model(XYZ)),
+                 **optimisation_settings).x.reshape([3, 3])
+
+    return M
 
 
 def camera_RGB_to_ACES2065_1(RGB, B, b, k=np.ones(3), clip=False):
