@@ -897,8 +897,8 @@ def matrix_idt_blackbox(RGB_source,
                         optimisation_factory=optimisation_factory_rawtoaces_v1,
                         optimisation_kwargs=None):
     """
-    Computes an *Input Deice Transform* (IDT) matrix for given source and target
-    *RGB* values.
+    Computes an *Input Device Transform* (IDT) matrix for given source and
+    target *RGB* values.
     Parameters
     ----------
     RGB_source : array_like
