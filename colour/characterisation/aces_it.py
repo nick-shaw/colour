@@ -16,8 +16,8 @@ Defines the *Academy Color Encoding System* (ACES) *Input Transform* utilities:
 -   :func:`colour.characterisation.training_data_sds_to_XYZ`
 -   :func:`colour.characterisation.optimisation_factory_rawtoaces_v1`
 -   :func:`colour.characterisation.optimisation_factory_Jzazbz`
+-   :func:`colour.characterisation.matrix_idt_blackbox`
 -   :func:`colour.matrix_idt`
--   :func:`matrix_idt_blackbox`
 -   :func:`colour.camera_RGB_to_ACES2065_1`
 
 References
