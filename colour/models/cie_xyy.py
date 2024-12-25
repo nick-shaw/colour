@@ -149,7 +149,7 @@ def xyY_to_XYZ(xyY: ArrayLike) -> NDArrayFloat:
     with sdiv_mode():
         Y_y = sdiv(Y, y)
 
-    XYZ = tstack([x * Y_y, Y, (1 - x - y) * Y_y])
+    XYZ = tstack([x * Y_y, Y, (1 - (x + y)) * Y_y])
 
     return from_range_1(XYZ)
 
