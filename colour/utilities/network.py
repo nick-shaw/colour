@@ -587,7 +587,7 @@ class Port(MixinLogging):
         self,
         name: str | None = None,
         value: Any = None,
-        description: str | None = None,
+        description: str = "",
         node: PortNode | None = None,
     ) -> None:
         super().__init__()
@@ -601,8 +601,7 @@ class Port(MixinLogging):
         self.name = optional(name, self._name)
         self._value = None
         self.value = optional(value, self._value)
-        self._description = description
-        self.description = optional(description, self._description)
+        self.description = description
 
     @property
     def name(self) -> str:
@@ -694,7 +693,7 @@ class Port(MixinLogging):
         self._value = value
 
     @property
-    def description(self) -> str | None:
+    def description(self) -> str:
         """
         Getter and setter property for the port description.
 
@@ -712,7 +711,7 @@ class Port(MixinLogging):
         return self._description
 
     @description.setter
-    def description(self, value: str | None) -> None:
+    def description(self, value: str) -> None:
         """Setter for the **self.description** property."""
 
         attest(
@@ -990,10 +989,9 @@ class PortNode(TreeNode, MixinLogging):
     2
     """
 
-    def __init__(self, name: str | None = None, description: str | None = None) -> None:
+    def __init__(self, name: str | None = None, description: str = "") -> None:
         super().__init__(name)
-        self._description = description
-        self.description = optional(description, self._description)
+        self.description = description
 
         self._input_ports = {}
         self._output_ports = {}
@@ -1084,7 +1082,7 @@ class PortNode(TreeNode, MixinLogging):
         return input_edges, output_edges
 
     @property
-    def description(self) -> str | None:
+    def description(self) -> str:
         """
         Getter and setter property for the node description.
 
@@ -1102,7 +1100,7 @@ class PortNode(TreeNode, MixinLogging):
         return self._description
 
     @description.setter
-    def description(self, value: str | None) -> None:
+    def description(self, value: str) -> None:
         """Setter for the **self.description** property."""
 
         attest(
@@ -1117,7 +1115,7 @@ class PortNode(TreeNode, MixinLogging):
         self,
         name: str,
         value: Any = None,
-        description: str | None = None,
+        description: str = "",
         port_type: Type[Port] = Port,
     ) -> Port:
         """
@@ -1191,7 +1189,7 @@ class PortNode(TreeNode, MixinLogging):
         self,
         name: str,
         value: Any = None,
-        description: str | None = None,
+        description: str = "",
         port_type: Type[Port] = Port,
     ) -> Port:
         """
@@ -1616,13 +1614,12 @@ class PortGraph(PortNode):
     3
     """
 
-    def __init__(self, name: str | None = None, description: str | None = None) -> None:
+    def __init__(self, name: str | None = None, description: str = "") -> None:
         super().__init__(name, description)
 
         self._name: str = self.__class__.__name__
         self.name = optional(name, self._name)
-        self._description = description
-        self.description = optional(description, self._description)
+        self.description = description
 
         self._nodes = {}
 
