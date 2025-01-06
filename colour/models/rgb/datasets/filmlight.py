@@ -109,7 +109,7 @@ MATRIX_FILMLIGHT_E_GAMUT_2_TO_XYZ: NDArrayFloat = np.array(
     [
         [0.736478, 0.130740, 0.083239],
         [0.275070, 0.828018, -0.103088],
-        [-0.124225, -0.087160, 1.300443]
+        [-0.124225, -0.087160, 1.300443],
     ]
 )
 """*FilmLight E-Gamut 2* colourspace to *CIE XYZ* tristimulus values matrix."""
