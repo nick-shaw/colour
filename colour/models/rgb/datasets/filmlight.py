@@ -11,6 +11,9 @@ References
 ----------
 -   :cite:`Siragusano2018a` : Siragusano, D. (2018). Private Discussion with
     Shaw, Nick.
+-   :cite:`Siragusano2025` : Siragusano, D. (2025). Private discussion on
+    colour-science Discord server. https://discord.com/channels/\
+    1269935627386884106/1269935628808622102/1325770472058523668
 """
 
 from __future__ import annotations
@@ -134,5 +137,5 @@ RGB_COLOURSPACE_FILMLIGHT_E_GAMUT_2.__doc__ = """
 
 References
 ----------
-:cite:`Siragusano2018a`
+:cite:`Siragusano2025`
 """
