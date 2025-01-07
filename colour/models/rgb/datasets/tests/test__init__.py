@@ -41,6 +41,7 @@ class TestRGB_COLOURSPACES:
             "ARRI Wide Gamut 3": 1e-6,
             "DJI D-Gamut": 5e-4,
             "ERIMM RGB": 1e-3,
+            "FilmLight E-Gamut 2": 1e-6,
             "Gamma 2.2 Encoded AdobeRGB": 1e-5,
             "Linear AdobeRGB": 1e-5,
             "ProPhoto RGB": 1e-3,
